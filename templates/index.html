@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Academic Advisor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5fc;
+            color: #243047;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #172554, #405bd5);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #e1e8ff;
+        }
+
+        nav {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px #0000000c;
+        }
+
+        nav a {
+            color: #3049a5;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 12px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            color: #172554;
+            margin-bottom: 8px;
+        }
+
+        .welcome p,
+        .description {
+            color: #68758a;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px #19285012;
+        }
+
+        .card h3 {
+            color: #243b80;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 17px 0 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5dbea;
+            border-radius: 7px;
+            background: #fcfdff;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #a5b4fc;
+            border-color: #405bd5;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 24px;
+            background: #304db5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e347f;
+        }
+
+        .result {
+            background: #eef3ff;
+            border-left: 5px solid #405bd5;
+            border-radius: 9px;
+            padding: 18px;
+            margin-top: 18px;
+        }
+
+        .standing {
+            font-size: 21px;
+            font-weight: bold;
+            color: #243b80;
+            margin: 8px 0 15px;
+        }
+
+        .result ul {
+            padding-left: 22px;
+            margin-top: 12px;
+        }
+
+        .result li {
+            margin-bottom: 10px;
+        }
+
+        .empty-state {
+            color: #68758a;
+            padding: 15px 0;
+        }
+
+        .error {
+            background: #fff0f0;
+            border-left: 4px solid #c62828;
+            color: #9b1c1c;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background: #172554;
+            color: #e1e8ff;
+            text-align: center;
+            padding: 22px;
+            margin-top: 45px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            .container {
+                margin-top: 25px;
+                padding: 0 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>AI Academic Advisor</h1>
+        <p>Smart Guidance for Better Academic Performance</p>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="#assessment">Assessment</a>
+        <a href="#results">Recommendations</a>
+    </nav>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h2>Welcome, Student!</h2>
+            <p>
+                Enter your academic information to receive a predicted
+                academic standing and useful study recommendations.
+            </p>
+        </section>
+
+        <div class="dashboard">
+
+            <section class="card" id="assessment">
+                <h3>Academic Assessment</h3>
+
+                <p class="description">
+                    Complete all four fields below.
+                </p>
+
+                {% if error %}
+                    <div class="error">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/">
+
+                    <label for="cgpa">CGPA (0–5)</label>
+                    <input
+                        type="number"
+                        id="cgpa"
+                        name="cgpa"
+                        min="0"
+                        max="5"
+                        step="0.01"
+                        value="{{ values.get('cgpa', '') }}"
+                        required
+                    >
+
+                    <label for="attendance">Attendance (%)</label>
+                    <input
+                        type="number"
+                        id="attendance"
+                        name="attendance"
+                        min="0"
+                        max="100"
+                        value="{{ values.get('attendance', '') }}"
+                        required
+                    >
+
+                    <label for="study_hours">Study Hours Per Week</label>
+                    <input
+                        type="number"
+                        id="study_hours"
+                        name="study_hours"
+                        min="0"
+                        max="80"
+                        value="{{ values.get('study_hours', '') }}"
+                        required
+                    >
+
+                    <label for="carryovers">Carryover Courses</label>
+                    <input
+                        type="number"
+                        id="carryovers"
+                        name="carryovers"
+                        min="0"
+                        value="{{ values.get('carryovers', '') }}"
+                        required
+                    >
+
+                    <button type="submit">
+                        Get Academic Advice
+                    </button>
+
+                </form>
+            </section>
+
+            <section class="card" id="results">
+                <h3>Academic Recommendations</h3>
+
+                <p class="description">
+                    Your model's prediction will appear here after submission.
+                </p>
+
+                {% if standing %}
+                    <div class="result">
+                        <h3>Your Assessment Result</h3>
+
+                        <p>Predicted Academic Standing:</p>
+                        <p class="standing">{{ standing }}</p>
+
+                        <h4>Recommended Actions</h4>
+
+                        <ul>
+                            {% for tip in tips %}
+                                <li>{{ tip }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <p class="empty-state">
+                        No assessment yet. Complete the form and click
+                        "Get Academic Advice" to see your result.
+                    </p>
+                {% endif %}
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>CSC 303 Project | AI Academic Advisor System</p>
+        <p>Academic support through machine learning</p>
+    </footer>
+
+</body>
+</html>
